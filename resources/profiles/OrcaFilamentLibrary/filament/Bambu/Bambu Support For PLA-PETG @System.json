@@ -3,7 +3,7 @@
 	"name": "Bambu Support For PLA/PETG @System",
 	"inherits": "Bambu Support For PLA/PETG @base",
 	"from": "system",
-	"setting_id": "0DgThBMi9bjVyuOg",
+	"setting_id": "OGFSS05_00",
 	"instantiation": "true",
 	"eng_plate_temp": [
 		"60"

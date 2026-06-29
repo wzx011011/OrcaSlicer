@@ -3,7 +3,7 @@
 	"name": "Chuanying Generic PVA",
 	"inherits": "Chuanying Generic PLA",
 	"from": "system",
-	"setting_id": "ePZFnkgBiyFuKvji",
+	"setting_id": "GFSA04",
 	"filament_id": "GFB99",
 	"instantiation": "true",
 	"activate_air_filtration": [

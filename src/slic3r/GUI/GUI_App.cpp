@@ -406,7 +406,7 @@ static void migrate_flatpak_legacy_datadir(const boost::filesystem::path &data_d
     std::cerr << "Migrating Flatpak data dir: " << data_dir_path << std::endl;
 
     std::string legacy_data_dir_str = data_dir_path.string();
-    boost::replace_first(legacy_data_dir_str, "com.orcaslicer.OrcaSlicer", "io.github.softfever.OrcaSlicer");
+    boost::replace_first(legacy_data_dir_str, "com.orcaslicer.OrcaSlicer", "io.github.orcaslicer.OrcaSlicer");
     const fs::path legacy_data_dir(legacy_data_dir_str);
 
     std::cerr << "Legacy Flatpak data dir: " << legacy_data_dir << std::endl;
@@ -472,7 +472,7 @@ static const FileWildcards file_wildcards_by_type[FT_SIZE] = {
     /* FT_OBJ */     { L("OBJ files"),       { ".obj"sv } },
     /* FT_AMF */     { L("AMF files"),       { ".amf"sv, ".zip.amf"sv, ".xml"sv } },
     /* FT_3MF */     { L("3MF files"),       { ".3mf"sv } },
-    /* FT_GCODE_3MF */ {L("G-code 3MF files"), {".gcode.3mf"sv}},
+    /* FT_GCODE_3MF */ {L("Gcode 3MF files"), {".gcode.3mf"sv}},
     /* FT_GCODE */   { L("G-code files"),    { ".gcode"sv} },
 #ifdef __APPLE__
     /* FT_MODEL */
@@ -743,15 +743,6 @@ void GUI_App::post_init()
     if (! this->initialized())
         throw Slic3r::RuntimeError("Calling post_init() while not yet initialized");
 
-#if wxUSE_WEBVIEW_EDGE
-    // Ensure the Microsoft WebView2 runtime is installed before any WebView is
-    // created. The setup wizard and several dialogs render entirely through
-    // WebView2; without the runtime they come up blank. This runs here (not in the
-    // constructor) so that wxWidgets is fully initialized and the event loop is
-    // running, and so it precedes the first WebView creation (the setup wizard).
-    init_webview_runtime();
-#endif
-
     m_open_method = "double_click";
     bool switch_to_3d = false;
 
@@ -949,33 +940,6 @@ void GUI_App::post_init()
         });
     }
 
-    // Orca: notify users upgrading from a pre-2.4.0 version that profile syncing
-    // moved from Bambu Cloud to Orca Cloud.
-    if (is_editor() && m_last_config_version && m_last_config_version->valid()
-        && *m_last_config_version < Semver(2, 4, 0)) {
-        CallAfter([] {
-            const wxString wiki_url = "https://www.orcaslicer.com/wiki/user_profiles/user_profiles.html#profiles-missing-after-updating-from-bambu-cloud";
-            MessageDialog dlg(nullptr,
-                _L("Since version 2.4.0, OrcaSlicer syncs user profiles through Orca Cloud instead of Bambu Cloud.\n\n"
-                   "To migrate your existing profiles, log in to Orca Cloud and they will be transferred automatically. "
-                   "To learn more about how OrcaSlicer stores and syncs your profiles, or to migrate your presets manually, check out our wiki.\n\n"
-                   "If you did not use Bambu Cloud to sync profiles, this change does not affect you and you can safely ignore this message."),
-                _L("Profile syncing change"),
-                wxOK,
-                "",
-                _L("Learn more"),
-                [wiki_url](const wxString &) { wxLaunchDefaultBrowser(wiki_url); });
-            // Hack: the "Learn more" link renders the message in a wxHtmlWindow whose
-            // height is underestimated for multi-paragraph text, leaving a scrollbar.
-            // The html sits in a proportion-1 sizer chain, so grow the dialog (never
-            // shrink it below its content width) to give the text enough room.
-            const wxSize sz = dlg.GetSize();
-            dlg.SetSize(std::max(sz.x, dlg.FromDIP(280)), std::max(sz.y, dlg.FromDIP(200)));
-            dlg.CenterOnParent();
-            dlg.ShowModal();
-        });
-    }
-
     if(!m_networking_need_update && m_agent) {
         m_agent->set_on_ssdp_msg_fn(
             [this](std::string json_str) {
@@ -1066,10 +1030,9 @@ GUI_App::GUI_App()
 	//app config initializes early becasuse it is used in instance checking in OrcaSlicer.cpp
     this->init_app_config();
     this->init_download_path();
-    // Note: the WebView2 runtime check (init_webview_runtime) used to run here, but
-    // the constructor executes before wxWidgets is fully initialized and before the
-    // event loop starts, so its modal prompt/installer could silently fail to appear.
-    // It now runs in post_init(), before the first WebView (the setup wizard) is created.
+#if wxUSE_WEBVIEW_EDGE
+    this->init_webview_runtime();
+#endif
 
     reset_to_active();
 }
@@ -2311,37 +2274,13 @@ void GUI_App::init_download_path()
 #if wxUSE_WEBVIEW_EDGE
 void GUI_App::init_webview_runtime()
 {
-    // Check whether the Microsoft WebView2 runtime is already present.
-    if (WebView::CheckWebViewRuntime()) {
-        BOOST_LOG_TRIVIAL(info) << "WebView2 runtime detected.";
-        return;
-    }
-
-    BOOST_LOG_TRIVIAL(warning) << "WebView2 runtime not found; prompting user to install.";
-    int nRet = wxMessageBox(_L("Orca Slicer requires the Microsoft WebView2 Runtime to operate certain features.\nClick Yes to install it now."),
-                            _L("WebView2 Runtime"), wxYES_NO);
-    if (nRet != wxYES) {
-        BOOST_LOG_TRIVIAL(warning) << "User declined WebView2 runtime installation.";
-        return;
-    }
-
-    // The bootstrapper auto-detects the device architecture (x64/x86/ARM64) and
-    // installs the matching runtime. The install is synchronous, and because this
-    // runs before the first WebView is created, a successful install takes effect
-    // in this same process without a restart.
-    bool installed = WebView::DownloadAndInstallWebViewRuntime();
-
-    // Re-check: the install can still fail (declined UAC elevation, no network,
-    // etc.). Without the runtime the setup wizard and other WebView dialogs render
-    // blank, so surface an explicit message rather than failing silently.
-    if (installed && WebView::CheckWebViewRuntime()) {
-        BOOST_LOG_TRIVIAL(info) << "WebView2 runtime installed successfully.";
-    } else {
-        BOOST_LOG_TRIVIAL(error) << "WebView2 runtime installation failed or still not detected.";
-        wxMessageBox(_L("The Microsoft WebView2 Runtime could not be installed.\n"
-                        "Some features, including the setup wizard, may appear blank until it is installed.\n"
-                        "Please install it manually from https://developer.microsoft.com/microsoft-edge/webview2/ and restart Orca Slicer."),
-                     _L("WebView2 Runtime"), wxOK | wxICON_WARNING);
+    // Check WebView Runtime
+    if (!WebView::CheckWebViewRuntime()) {
+        int nRet = wxMessageBox(_L("Orca Slicer requires the Microsoft WebView2 Runtime to operate certain features.\nClick Yes to install it now."),
+                                _L("WebView2 Runtime"), wxYES_NO);
+        if (nRet == wxYES) {
+            WebView::DownloadAndInstallWebViewRuntime();
+        }
     }
 }
 #endif
@@ -2816,28 +2755,25 @@ bool GUI_App::on_init_inner()
 #endif
 #endif
 
-    // Orca: we allow user to pin the version of plugin, so we don't need to remove old networking plugins when the app version is updated
-    //
-    // if (m_last_config_version) {
-    //     int last_major = m_last_config_version->maj();
-    //     int last_minor = m_last_config_version->min();
-    //     int last_patch = m_last_config_version->patch()/100;
-    //     std::string studio_ver = SLIC3R_VERSION;
-    //     int cur_major = atoi(studio_ver.substr(0,2).c_str());
-    //     int cur_minor = atoi(studio_ver.substr(3,2).c_str());
-    //     int cur_patch = atoi(studio_ver.substr(6,2).c_str());
-    //     BOOST_LOG_TRIVIAL(info) << boost::format("last app version {%1%.%2%.%3%}, current version {%4%.%5%.%6%}")
-    //         %last_major%last_minor%last_patch%cur_major%cur_minor%cur_patch;
-    //     if ((last_major != cur_major)
-    //         ||(last_minor != cur_minor)
-    //         ||(last_patch != cur_patch)) {
-    //         remove_old_networking_plugins();
-    //     }
-    // }
+    if (m_last_config_version) {
+        int last_major = m_last_config_version->maj();
+        int last_minor = m_last_config_version->min();
+        int last_patch = m_last_config_version->patch()/100;
+        std::string studio_ver = SLIC3R_VERSION;
+        int cur_major = atoi(studio_ver.substr(0,2).c_str());
+        int cur_minor = atoi(studio_ver.substr(3,2).c_str());
+        int cur_patch = atoi(studio_ver.substr(6,2).c_str());
+        BOOST_LOG_TRIVIAL(info) << boost::format("last app version {%1%.%2%.%3%}, current version {%4%.%5%.%6%}")
+            %last_major%last_minor%last_patch%cur_major%cur_minor%cur_patch;
+        if ((last_major != cur_major)
+            ||(last_minor != cur_minor)
+            ||(last_patch != cur_patch)) {
+            remove_old_networking_plugins();
+        }
+    }
 
-    //Orca: write OrcaSlicer version
-    if(app_config->get("version") != SoftFever_VERSION) {
-        app_config->set("version", SoftFever_VERSION);
+    if(app_config->get("version") != SLIC3R_VERSION) {
+        app_config->set("version", SLIC3R_VERSION);
     }
 
     // Orca: use wxWeakRef to provent wild pointer.
@@ -2923,11 +2859,7 @@ bool GUI_App::on_init_inner()
                     switch (dialog.ShowModal())
                     {
                     case wxID_YES:
-                        // Store builds get updates from the Microsoft Store, not the GitHub release page.
-                        if (is_running_in_msix())
-                            open_ms_store_product_page();
-                        else
-                            wxLaunchDefaultBrowser(version_info.url);
+                        wxLaunchDefaultBrowser(version_info.url);
                         break;
                     case wxID_NO:
                         break;
@@ -4557,7 +4489,7 @@ void GUI_App::request_user_logout(const std::string& provider/* = ORCA_CLOUD_PRO
             /* delete old user settings */
             bool     transfer_preset_changes = false;
             wxString header = _L("Some presets are modified.") + "\n" +
-                _L("You can keep the modified presets for the new project, discard, or save changes as new presets.");
+                _L("You can keep the modified presets to the new project, discard or save changes as new presets.");
             wxGetApp().check_and_keep_current_preset_changes(_L("User logged out"), header, ActionButtons::KEEP | ActionButtons::SAVE, &transfer_preset_changes);
 
             remove_user_presets();
@@ -6305,11 +6237,8 @@ bool GUI_App::maybe_migrate_user_presets_on_login()
 
 bool GUI_App::check_preset_parent_available(const std::pair<std::string, std::map<std::string, std::string>>& preset_data)
 {
-    auto it = preset_data.second.find(BBL_JSON_KEY_INHERITS);
-    if (it == preset_data.second.end() || it->second.empty())
-        return true;
-    const std::string& inherits_name = it->second;
-    // If contains "fdm_", "@System", and "@base", is a common base template that doesn't need to be installed
+    std::string inherits_name = preset_data.second.at(BBL_JSON_KEY_INHERITS);
+    // // If contains "fdm_", "@System", and "@base", is a common base template that doesn't need to be installed
     if (inherits_name.find("fdm_") != std::string::npos || inherits_name.find("@System") != std::string::npos || inherits_name.find("@base") != std::string::npos)
         return true;
 
@@ -6590,16 +6519,16 @@ void GUI_App::update_single_bundle(wxCommandEvent& evt)
     });
 }
 
-int GUI_App::sync_bundle(std::string bundle_id, std::string version)
+void GUI_App::sync_bundle(std::string bundle_id, std::string version)
 {
     // if(preset_bundle->bundles.pauseReads.load())
     // {
     //     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : Update thread sync_bundle function yielded to main thread. 1";
     //     return; // if the main thread acquires the lock at the start of our operations, we will yield
     // }
-    if (!m_agent || !m_agent->is_user_login()) return 0;
+    if (!m_agent || !m_agent->is_user_login()) return;
     auto orca_agent = std::dynamic_pointer_cast<OrcaCloudServiceAgent>(m_agent->get_cloud_agent());
-    if (!orca_agent) return 0;
+    if (!orca_agent) return;
 
     BOOST_LOG_TRIVIAL(info) << "sync_bundle: checking bundle " << bundle_id << " for updates";
 
@@ -6622,12 +6551,12 @@ int GUI_App::sync_bundle(std::string bundle_id, std::string version)
             BOOST_LOG_TRIVIAL(warning) << "sync_bundle: failed to parse versions for bundle " << bundle_id
                                     << " (local: " << local_version << ", remote: " << remote_version << ")";
             preset_bundle->bundles.ReadUnlock(); // unlock read when fail
-            return -1;
+            return;
         }
         if (remote_version <= local_version) {
             BOOST_LOG_TRIVIAL(info) << "sync_bundle: bundle " << bundle_id << " is up-to-date (version " << local_version << ")";
             preset_bundle->bundles.ReadUnlock(); // unlock read when fail
-            return -1;
+            return;
         }
         BOOST_LOG_TRIVIAL(info) << "sync_bundle: updating bundle " << bundle_id
                                 << " from version " << local_version
@@ -6644,7 +6573,8 @@ int GUI_App::sync_bundle(std::string bundle_id, std::string version)
 
     // if it is an update, we will lock and write
     std::string ver;
-    if (is_update) {
+    if(is_update)
+    {
         preset_bundle->bundles.WriteLock();
         preset_bundle->bundles.m_bundles[bundle_id].update_available = true;
         preset_bundle->bundles.m_bundles[bundle_id].is_subscribed = true;
@@ -6652,13 +6582,8 @@ int GUI_App::sync_bundle(std::string bundle_id, std::string version)
         preset_bundle->bundles.WriteUnlock();
     }
 
-    const bool auto_update = app_config->get_bool("preset_bundle_auto_update");
-
-    if (is_update && !auto_update) {
-        return 1;
-    }
-
-    if (auto_update || is_new) {
+    if(app_config->get_bool("preset_bundle_auto_update") == true || is_new) 
+    {  
         // Fetch the latest bundle data from cloud
         std::map<std::string, std::map<std::string, std::string>> bundle_presets;
         BundleMetadata remote_metadata;
@@ -6666,23 +6591,22 @@ int GUI_App::sync_bundle(std::string bundle_id, std::string version)
 
         if (result != 0) {
             BOOST_LOG_TRIVIAL(warning) << "sync_bundle: failed to fetch bundle " << bundle_id << ", result=" << result;
-            return -1;
+            return;
         }
 
         // Import the updated bundle on the main thread
-        CallAfter(
-            [this, bundle_id, bundle_presets, remote_metadata, is_new, is_update, ver]() {
-                if (!is_closing() && preset_bundle && app_config) {
-                    // Check the presets for any system vendors that need to be installed
-                    for (auto data : bundle_presets) {
-                        if (!check_preset_parent_available(data)) {
-                            add_pending_vendor_preset(data);
-                        }
+        CallAfter([this, bundle_id, bundle_presets, remote_metadata,is_new,is_update,ver]() {
+            if (!is_closing() && preset_bundle && app_config) {
+                // Check the presets for any system vendors that need to be installed
+                for (auto data : bundle_presets) {
+                    if (!check_preset_parent_available(data)) {
+                        add_pending_vendor_preset(data);
                     }
-                    load_pending_vendors();
+                }
+                load_pending_vendors();
 
-                    // if(!preset_bundle->bundles.pauseReads.load()) // check again if we can actually update so as to not block the main thread
-                    // {
+                // if(!preset_bundle->bundles.pauseReads.load()) // check again if we can actually update so as to not block the main thread 
+                // {
                     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : CallAfter from sync_bundle function actually updating subscribed presets";
                     
                     preset_bundle->bundles.WriteLock();
@@ -6712,12 +6636,10 @@ int GUI_App::sync_bundle(std::string bundle_id, std::string version)
                     if (mainframe)
                         mainframe->update_side_preset_ui();
                     BOOST_LOG_TRIVIAL(info) << "sync_bundle: successfully updated bundle " << bundle_id;
-                    // }
-                }
-            });
+                // }
+            }
+        });
     }
-
-    return 0;
 }
 
 
@@ -6852,9 +6774,6 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
     // BBS
     m_user_sync_token.reset(new int(0));
     if (with_progress_dlg) {
-        // Mark a manual progress dialog as active so restart_sync_user_preset() ignores
-        // repeat triggers while it is on screen (prevents stacking modal dialogs).
-        m_sync_user_preset_dlg_active = true;
         auto dlg = new ProgressDialog(_L("Loading"), "", 100, this->mainframe, wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_ABORT);
         dlg->Update(0, _L("Loading user preset"));
         progressFn = [this, dlg](int percent) {
@@ -6866,9 +6785,7 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
             return is_closing() || dlg->WasCanceled() || t.expired();
         };
         finishFn = [this, dlg](bool) {
-            // Clear the guard together with destroying the dialog, on the GUI thread, so the
-            // next manual sync is allowed exactly once this dialog leaves the screen.
-            CallAfter([=]{ dlg->Destroy(); m_sync_user_preset_dlg_active = false; });
+            CallAfter([=]{ dlg->Destroy(); });
         };
     }
     else {
@@ -6882,10 +6799,7 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
 
     m_sync_update_thread = Slic3r::create_thread(
         [this, progressFn, cancelFn, finishFn, t = std::weak_ptr<int>(m_user_sync_token)] {
-            // finishFn tears down the progress dialog (and clears the re-entrancy guard), so it
-            // must run on every exit path — otherwise an early bail-out would leak the modal
-            // dialog and leave the guard stuck, blocking all later manual syncs.
-            if (!m_agent) { finishFn(false); return; }
+            if (!m_agent) return;
 
             // One-time scan for orphaned .info files left over from offline deletions; queues HTTP DELETEs.
             scan_orphaned_info_files();
@@ -6929,10 +6843,6 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
             std::vector<Preset> presets_to_sync;
             std::vector<std::pair<std::string, std::string>> bundles_to_sync;
             std::unordered_set<std::string> bundles_synced;
-
-            std::unordered_set<std::string> known_available_updates;
-
-            bool update_available = false;
             // Sync once immediately, then every 60 seconds.
             while (!t.expired()) {
                 ++tick_tock;
@@ -7038,31 +6948,17 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
                         
                             // Iterate over the bundles, and update/create
                         for (const auto& bundle_entry : bundles_to_sync) {
+
                             bundles_synced.insert(bundle_entry.first);
-                            // Sync each bundle individually
-                            // if(!preset_bundle->bundles.pauseReads.load()) // if pause is true we will skip updating this frame altogether
-                            // {
-                            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : Update thread syncing bundles";
-                            int res = sync_bundle(bundle_entry.first, bundle_entry.second);
-
-                            const std::string known_update_key = bundle_entry.first + ":" + bundle_entry.second;
-                            if (res == 1 && known_available_updates.insert(known_update_key).second) {
-                                update_available = true;
-                            }
-
-                            // }
-                            // Small delay between bundle syncs to avoid overwhelming the server
-                            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-                        }
-
-                        if (update_available) {
-                            wxGetApp()
-                                .plater()
-                                ->get_notification_manager()
-                                ->push_notification(NotificationType::CustomNotification,
-                                                    NotificationManager::NotificationLevel::RegularNotificationLevel, "There is an update available. Open the preset bundle dialog to update it.");
-
-                            update_available = false;
+                                // Sync each bundle individually
+                                // if(!preset_bundle->bundles.pauseReads.load()) // if pause is true we will skip updating this frame altogether
+                                // {   
+                                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : Update thread syncing bundles";
+                                    sync_bundle(bundle_entry.first, bundle_entry.second);
+                                // }
+                                // Small delay between bundle syncs to avoid overwhelming the server
+                                boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+                            
                         }
                         
                         std::vector<BundleMetadata> to_delete;
@@ -7145,14 +7041,6 @@ void GUI_App::stop_sync_user_preset()
 
 void GUI_App::restart_sync_user_preset()
 {
-    // A manual sync's progress dialog is already on screen — ignore repeat triggers so a
-    // second modal dialog can never stack. This matters most offline: each attempt blocks
-    // on a long HTTP timeout and can't be cancelled mid-request, and on macOS the global
-    // menu bar stays clickable even while the dialog disables the main window, so without
-    // this guard repeated clicks pile up modal dialogs and wedge the UI (force-quit only).
-    if (m_sync_user_preset_dlg_active)
-        return;
-
     if (!m_user_sync_token) {
         // No sync running. If a restart helper is already in flight it will
         // start the new sync once the old thread is joined — don't race it.
@@ -9224,10 +9112,6 @@ static bool del_win_registry(HKEY hkeyHive, const wchar_t *pszVar, const wchar_t
 void GUI_App::associate_files(std::wstring extend)
 {
 #ifdef WIN32
-    // MSIX: shell integration is declared in the package manifest; registry
-    // writes from a packaged process are virtualized and invisible to the shell.
-    if (is_running_in_msix())
-        return;
     wchar_t app_path[MAX_PATH];
     ::GetModuleFileNameW(nullptr, app_path, sizeof(app_path));
 
@@ -9253,8 +9137,6 @@ void GUI_App::associate_files(std::wstring extend)
 void GUI_App::disassociate_files(std::wstring extend)
 {
 #ifdef WIN32
-    if (is_running_in_msix())
-        return;
     wchar_t app_path[MAX_PATH];
     ::GetModuleFileNameW(nullptr, app_path, sizeof(app_path));
 
@@ -9306,8 +9188,6 @@ bool GUI_App::check_url_association(std::wstring url_prefix, std::wstring& reg_b
 void GUI_App::associate_url(std::wstring url_prefix)
 {
 #ifdef WIN32
-    if (is_running_in_msix())
-        return;
     boost::filesystem::path binary_path(boost::filesystem::canonical(boost::dll::program_location()));
     wxString wbinary = from_path(binary_path);
     BOOST_LOG_TRIVIAL(info) << "Downloader registration: Path of binary: " << wbinary.ToUTF8().data();
@@ -9333,8 +9213,6 @@ void GUI_App::associate_url(std::wstring url_prefix)
 void GUI_App::disassociate_url(std::wstring url_prefix)
 {
 #ifdef WIN32
-    if (is_running_in_msix())
-        return;
     wxRegKey key_full(wxRegKey::HKCU, "Software\\Classes\\" + url_prefix + "\\shell\\open\\command");
     if (!key_full.Exists()) {
         return;

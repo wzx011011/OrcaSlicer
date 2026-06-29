@@ -3,7 +3,7 @@
 	"name": "COEX TPE 40D @System",
 	"inherits": "COEX TPE 40D @base",
 	"from": "system",
-	"setting_id": "5O6zPyLhGADPnBCP",
+	"setting_id": "C0X40D18",
 	"instantiation": "true",
 	"filament_max_volumetric_speed": [
 		"5.5"

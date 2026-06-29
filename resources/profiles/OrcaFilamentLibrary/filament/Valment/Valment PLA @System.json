@@ -3,7 +3,7 @@
 	"name": "Valment PLA @System",
 	"inherits": "Valment PLA @base",
 	"from": "system",
-	"setting_id": "yissaEWECKefSRTG",
+	"setting_id": "VLMNT_01",
 	"instantiation": "true",
 	"compatible_printers": []
 }

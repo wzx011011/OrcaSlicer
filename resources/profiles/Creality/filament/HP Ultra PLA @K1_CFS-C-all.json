@@ -3,7 +3,7 @@
     "name": "HP Ultra PLA @K1_CFS-C-all",
     "inherits": "fdm_filament_pla",
     "from": "system",
-    "setting_id": "HfPCXm8gwCtZnkjJ",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"

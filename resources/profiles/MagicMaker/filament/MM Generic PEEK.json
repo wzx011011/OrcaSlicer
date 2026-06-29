@@ -3,7 +3,7 @@
 	"name": "MM Generic PEEK",
 	"inherits": "fdm_filament_peek",
 	"from": "system",
-	"setting_id": "iznBAOK0m6dO7SCh",
+	"setting_id": "GFSA04",
 	"filament_id": "GFG99",
 	"instantiation": "true",
 	"fan_max_speed": [

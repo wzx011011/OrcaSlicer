@@ -3,7 +3,7 @@
 	"name": "PolyLite ABS @System",
 	"inherits": "PolyLite ABS @base",
 	"from": "system",
-	"setting_id": "X4JvhjTs6f0bFYlF",
+	"setting_id": "OGFSB60_00",
 	"instantiation": "true",
 	"compatible_printers": []
 }

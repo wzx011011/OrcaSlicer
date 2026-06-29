@@ -3,7 +3,7 @@
 	"name": "FlyingBear PLA Hyper",
 	"inherits": "fdm_filament_pla_Hyper",
 	"from": "system",
-	"setting_id": "72RZHGo7eACm2tN5",
+	"setting_id": "GFSA04",
 	"filament_id": "GFL99",
 	"instantiation": "true",
 	"filament_flow_ratio": [

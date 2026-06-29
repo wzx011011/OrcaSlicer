@@ -1,6 +1,6 @@
 {
 	"type": "machine",
-	"setting_id": "OrYBz2bwPIXQ0QZa",
+	"setting_id": "GM001",
 	"name": "Sovol SV01 0.4 nozzle",
 	"from": "system",
 	"instantiation": "true",

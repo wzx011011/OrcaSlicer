@@ -3,7 +3,7 @@
 	"name": "0.38mm Draft @Construct 1 XL",
 	"inherits": "fdm_process_common",
 	"from": "system",
-	"setting_id": "gWmpdwwLP3tIGgRX",
+	"setting_id": "GP004",
 	"instantiation": "true",
 	"bottom_shell_layers": "2",
 	"bridge_speed": "60",

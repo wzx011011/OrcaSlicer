@@ -3,7 +3,7 @@
 	"name": "Panchroma CoPE @System",
 	"inherits": "Panchroma CoPE @base",
 	"from": "system",
-	"setting_id": "6dj97PxQneOH6dAh",
+	"setting_id": "OGFSPM016",
 	"instantiation": "true",
 	"filament_flow_ratio": [
 		"0.98"

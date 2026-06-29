@@ -30,14 +30,8 @@
 namespace Slic3r {
     struct FloatOrPercent
     {
-        double  value = 0;
-        bool    percent = false;
-
-        FloatOrPercent() {}
-        FloatOrPercent(double value_, bool percent_) : value(value_), percent(percent_) { }
-
-        double get_abs_value(double ratio_over) const { return this->percent ? (ratio_over * this->value / 100) : this->value; }
-
+        double  value;
+        bool    percent;
     private:
         friend class cereal::access;
         template<class Archive> void serialize(Archive& ar) { ar(this->value); ar(this->percent); }
@@ -2081,6 +2075,9 @@ public:
 
     std::string serialize() const override
     {
+        // OWzx fix: keys_map 可能为 null（DynamicPrintConfig 转换时丢失），降级输出数字
+        if (this->keys_map == nullptr)
+            return std::to_string(this->value);
         for (const auto &kvp : *this->keys_map)
             if (kvp.second == this->value)
                 return kvp.first;
@@ -2090,6 +2087,8 @@ public:
     bool deserialize(const std::string &str, bool append = false) override
     {
         UNUSED(append);
+        // OWzx fix: keys_map 可能为 null
+        if (this->keys_map == nullptr) return false;
         auto it = this->keys_map->find(str);
         if (it == this->keys_map->end())
             return false;
@@ -2174,6 +2173,8 @@ public:
                     throw ConfigurationError("Deserializing nil into a non-nullable object");
             }
             else {
+                // OWzx fix: keys_map 可能为 null（DynamicPrintConfig 转换时丢失）
+                if (this->keys_map == nullptr) return false;
                 auto it = this->keys_map->find(item_str);
                 if (it == this->keys_map->end())
                     return false;
@@ -2192,7 +2193,13 @@ private:
             else
                 throw ConfigurationError("Serializing NaN");
         }
-        else if (this->keys_map != nullptr) {
+        else {
+            // OWzx fix: keys_map 可能为 null（DynamicPrintConfig 转换时丢失），
+            // 降级输出数字避免解引用空指针崩溃（append_full_config G-code 注释场景）
+            if (this->keys_map == nullptr) {
+                ss << v;
+                return;
+            }
             for (const auto& kvp : *this->keys_map)
                 if (kvp.second == v)
                     ss << kvp.first;
@@ -2732,7 +2739,6 @@ public:
     void set_deserialize_strict(std::initializer_list<SetDeserializeItem> items)
         { ConfigSubstitutionContext ctxt{ ForwardCompatibilitySubstitutionRule::Disable }; this->set_deserialize(items, ctxt); }
 
-    double get_abs_value_at(const t_config_option_key &opt_key, size_t index) const;
     double get_abs_value(const t_config_option_key &opt_key) const;
     double get_abs_value(const t_config_option_key &opt_key, double ratio_over) const;
     void setenv_() const;
@@ -2907,17 +2913,13 @@ public:
 
     double&             opt_float(const t_config_option_key &opt_key)                           { return this->option<ConfigOptionFloat>(opt_key)->value; }
     const double&       opt_float(const t_config_option_key &opt_key) const                     { return dynamic_cast<const ConfigOptionFloat*>(this->option(opt_key))->value; }
-    double &            opt_float(const t_config_option_key &opt_key, unsigned int idx);
-    const double &      opt_float(const t_config_option_key &opt_key, unsigned int idx) const;
-    double &            opt_float_nullable(const t_config_option_key &opt_key, unsigned int idx) { return this->option<ConfigOptionFloatsNullable>(opt_key)->get_at(idx); }
-    const double &      opt_float_nullable(const t_config_option_key &opt_key, unsigned int idx) const { return dynamic_cast<const ConfigOptionFloatsNullable *>(this->option(opt_key))->get_at(idx); }
+    double&             opt_float(const t_config_option_key &opt_key, unsigned int idx)         { return this->option<ConfigOptionFloats>(opt_key)->get_at(idx); }
+    const double&       opt_float(const t_config_option_key &opt_key, unsigned int idx) const   { return dynamic_cast<const ConfigOptionFloats*>(this->option(opt_key))->get_at(idx); }
 
     int&                opt_int(const t_config_option_key &opt_key)                             { return this->option<ConfigOptionInt>(opt_key)->value; }
     int                 opt_int(const t_config_option_key &opt_key) const                       { return dynamic_cast<const ConfigOptionInt*>(this->option(opt_key))->value; }
     int&                opt_int(const t_config_option_key &opt_key, unsigned int idx)           { return this->option<ConfigOptionInts>(opt_key)->get_at(idx); }
     int                 opt_int(const t_config_option_key &opt_key, unsigned int idx) const     { return dynamic_cast<const ConfigOptionInts*>(this->option(opt_key))->get_at(idx); }
-    int&                opt_int_nullable(const t_config_option_key &opt_key, unsigned int idx)  { return this->option<ConfigOptionIntsNullable>(opt_key)->get_at(idx);}
-    const int &         opt_int_nullable(const t_config_option_key &opt_key, unsigned int idx) const { return dynamic_cast<const ConfigOptionIntsNullable*>(this->option(opt_key))->get_at(idx);}
 
     // In ConfigManipulation::toggle_print_fff_options, it is called on option with type ConfigOptionEnumGeneric* and also ConfigOptionEnum*.
     // Thus the virtual method getInt() is used to retrieve the enum value.
@@ -2925,13 +2927,9 @@ public:
     ENUM                opt_enum(const t_config_option_key &opt_key) const                      { return static_cast<ENUM>(this->option(opt_key)->getInt()); }
     // BBS
     int                 opt_enum(const t_config_option_key &opt_key, unsigned int idx) const    { return dynamic_cast<const ConfigOptionEnumsGeneric*>(this->option(opt_key))->get_at(idx); }
-    int                 opt_enum_nullable(const t_config_option_key &opt_key, unsigned int idx) const { return dynamic_cast<const ConfigOptionEnumsGenericNullable*>(this->option(opt_key))->get_at(idx); }
-
 
     bool                opt_bool(const t_config_option_key &opt_key) const                      { return this->option<ConfigOptionBool>(opt_key)->value != 0; }
-    bool                opt_bool(const t_config_option_key &opt_key, unsigned int idx) const;
-    bool                opt_bool_nullable(const t_config_option_key &opt_key, unsigned int idx) const { return dynamic_cast<const ConfigOptionBoolsNullable*>(this->option(opt_key))->get_at(idx);}
-
+    bool                opt_bool(const t_config_option_key &opt_key, unsigned int idx) const    { return this->option<ConfigOptionBools>(opt_key)->get_at(idx) != 0; }
 
     // Command line processing
     bool                read_cli(int argc, const char* const argv[], t_config_option_keys* extra, t_config_option_keys* keys = nullptr);

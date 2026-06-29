@@ -3,7 +3,7 @@
 	"name": "Flashforge HS PLA",
 	"inherits": "Flashforge Generic PLA",
 	"from": "system",
-	"setting_id": "vdaZBnDsmUC1fhDp",
+	"setting_id": "GFSA04",
 	"instantiation": "true",
 	"filament_settings_id": [
 		"Flashforge HS PLA"

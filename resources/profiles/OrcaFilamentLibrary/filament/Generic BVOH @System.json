@@ -3,7 +3,7 @@
 	"name": "Generic BVOH @System",
 	"inherits": "fdm_filament_bvoh",
 	"from": "system",
-	"setting_id": "oUpbqz3uzQqND5DG",
+	"setting_id": "OGFSS97_00",
 	"instantiation": "true",
 	"compatible_printers": []
 }

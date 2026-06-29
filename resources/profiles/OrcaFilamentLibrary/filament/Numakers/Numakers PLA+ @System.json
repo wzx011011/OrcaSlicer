@@ -3,7 +3,7 @@
 	"name": "Numakers PLA+ @System",
 	"inherits": "Numakers PLA+ @base",
 	"from": "system",
-	"setting_id": "SS0Oh47g7sp3IvRA",
+	"setting_id": "ONMK00",
 	"instantiation": "true",
 	"filament_long_retractions_when_cut": [
 		"1"

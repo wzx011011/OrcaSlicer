@@ -2,7 +2,7 @@
 	"type": "filament",
 	"name": "FILL3D PP @System",
 	"from": "system",
-	"setting_id": "7FAQwU4JwTfuaGa1",
+	"setting_id": "FILL3D004SYS",
 	"instantiation": "true",
 	"inherits": "FILL3D PP @base",
 	"compatible_printers": []

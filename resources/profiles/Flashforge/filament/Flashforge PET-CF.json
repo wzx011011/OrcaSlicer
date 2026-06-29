@@ -3,7 +3,7 @@
 	"name": "Flashforge PET-CF",
 	"inherits": "FusRock Generic PET-CF",
 	"from": "system",
-	"setting_id": "vflpXTS9GwnODQDH",
+	"setting_id": "GFSA04",
 	"instantiation": "true",
 	"filament_density": [
 		"1.1"

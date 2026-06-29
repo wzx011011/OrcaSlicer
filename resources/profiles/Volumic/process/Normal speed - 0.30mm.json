@@ -1,6 +1,6 @@
 {
 	"type": "process",
-	"setting_id": "fLtovREOpasPunPM",
+	"setting_id": "GP004",
 	"name": "Normal speed - 0.30mm",
 	"from": "system",
 	"inherits": "fdm_process_volumic_common",

@@ -25,7 +25,7 @@ class CoolingBuffer {
 public:
     CoolingBuffer(GCode &gcodegen);
     void        reset(const Vec3d &position);
-    void        set_current_extruder(unsigned int extruder_id, unsigned int nozzle_id) { m_current_extruder = extruder_id; m_current_nozzle = nozzle_id; }
+    void        set_current_extruder(unsigned int extruder_id) { m_current_extruder = extruder_id; }
     std::string process_layer(std::string &&gcode, size_t layer_id, bool flush);
 
 private:
@@ -55,7 +55,6 @@ private:
     // the PrintConfig slice of FullPrintConfig is constant, thus no thread synchronization is required.
     const PrintConfig          &m_config;
     unsigned int                m_current_extruder;
-    unsigned int                m_current_nozzle;
     //BBS: current fan speed
     int                         m_current_fan_speed;
 };

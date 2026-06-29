@@ -3,7 +3,7 @@
 	"name": "Panchroma PLA Translucent @System",
 	"inherits": "Panchroma PLA Translucent @base",
 	"from": "system",
-	"setting_id": "G3BIFSNwpzBuHMkC",
+	"setting_id": "OGFSPM006",
 	"instantiation": "true",
 	"filament_flow_ratio": [
 		"0.98"

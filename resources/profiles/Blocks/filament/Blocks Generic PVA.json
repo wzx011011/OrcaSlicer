@@ -3,7 +3,7 @@
 	"name": "Blocks Generic PVA",
 	"inherits": "fdm_filament_pva",
 	"from": "system",
-	"setting_id": "J74KgdSzf503Tk9p",
+	"setting_id": "BSSI009",
 	"filament_id": "BSFI009",
 	"instantiation": "true",
 	"filament_flow_ratio": [

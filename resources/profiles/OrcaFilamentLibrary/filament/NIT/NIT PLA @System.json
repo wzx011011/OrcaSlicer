@@ -3,7 +3,7 @@
 	"name": "NIT PLA @System",
 	"inherits": "NIT PLA @base",
 	"from": "system",
-	"setting_id": "Bb0fr6cpCxR5lOpU",
+	"setting_id": "PLA01_00",
 	"instantiation": "true",
 	"compatible_printers": []
 }

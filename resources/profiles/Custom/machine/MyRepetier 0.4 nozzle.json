@@ -3,7 +3,7 @@
 	"name": "MyRepetier 0.4 nozzle",
 	"inherits": "fdm_repetier_common",
 	"from": "system",
-	"setting_id": "DQo4iCTagLKPE8Kv",
+	"setting_id": "GM001",
 	"instantiation": "true",
 	"printer_model": "Generic Repetier Printer",
 	"nozzle_diameter": [

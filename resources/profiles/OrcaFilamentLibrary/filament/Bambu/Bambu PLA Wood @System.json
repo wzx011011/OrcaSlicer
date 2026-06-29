@@ -3,7 +3,7 @@
 	"name": "Bambu PLA Wood @System",
 	"inherits": "Bambu PLA Wood @base",
 	"from": "system",
-	"setting_id": "FJKP4YybAXlqyiRm",
+	"setting_id": "OGFSA16_00",
 	"instantiation": "true",
 	"compatible_printers": []
 }

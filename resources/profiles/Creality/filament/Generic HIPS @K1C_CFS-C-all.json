@@ -3,7 +3,7 @@
     "name": "Generic HIPS @K1C_CFS-C-all",
     "inherits": "fdm_filament_hips",
     "from": "system",
-    "setting_id": "5ZZon4W5GRf2ilKk",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"
@@ -54,7 +54,7 @@
         "0"
     ],
     "filament_max_volumetric_speed": [
-        "10"
+        "4"
     ],
     "filament_retract_before_wipe": [
         "100%"

@@ -3,7 +3,7 @@
 	"name": "Bambu Support for ABS @System",
 	"inherits": "Bambu Support for ABS @base",
 	"from": "system",
-	"setting_id": "5fy5QeiH5NyGq69r",
+	"setting_id": "OGFSS06_00",
 	"instantiation": "true",
 	"filament_long_retractions_when_cut": [
 		"1"

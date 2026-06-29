@@ -3,7 +3,7 @@
 	"name": "Bambu PLA @0.6 nozzle",
 	"inherits": "Bambu PLA",
 	"from": "system",
-	"setting_id": "HjjvZoWwpjZ2gwDO",
+	"setting_id": "GFSL99",
 	"filament_id": "GFL99",
 	"instantiation": "true",
 	"filament_flow_ratio": [

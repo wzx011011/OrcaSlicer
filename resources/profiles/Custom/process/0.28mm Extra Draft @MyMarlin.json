@@ -3,7 +3,7 @@
 	"name": "0.28mm Extra Draft @MyMarlin",
 	"inherits": "fdm_process_marlin_common",
 	"from": "system",
-	"setting_id": "FPRthCpiEQtZgF7W",
+	"setting_id": "GP004",
 	"instantiation": "true",
 	"layer_height": "0.28",
 	"top_surface_line_width": "0.45",

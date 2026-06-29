@@ -3,7 +3,7 @@
 	"name": "Qidi Generic PLA High Speed @Qidi X-Plus 4 0.6 nozzle",
 	"inherits": "Qidi Generic PLA @Qidi X-Plus 4 0.6 nozzle",
 	"from": "system",
-	"setting_id": "VqVyXnU77CZCKsNy",
+	"setting_id": "GFSL99",
 	"filament_id": "GFL99",
 	"instantiation": "true",
 	"slow_down_layer_time": [

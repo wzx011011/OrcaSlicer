@@ -3,7 +3,7 @@
 	"name": "Generic ABS @Qidi Q2 0.6 nozzle",
 	"inherits": "Generic ABS@Q2-Series",
 	"from": "system",
-	"setting_id": "K2ccIrgJE3wRUxJw",
+	"setting_id": "GFSA04",
 	"instantiation": "true",
 	"filament_max_volumetric_speed": [
 		"24.5"

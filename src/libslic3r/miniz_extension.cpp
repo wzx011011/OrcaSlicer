@@ -92,7 +92,7 @@ std::string MZ_Archive::get_errorstr(mz_zip_error mz_err)
     case MZ_ZIP_TOO_MANY_FILES:
         return L("too many files");
     case MZ_ZIP_FILE_TOO_LARGE:
-        return L("File too large");
+        return L("file too large");
     case MZ_ZIP_UNSUPPORTED_METHOD:
         return L("unsupported method");
     case MZ_ZIP_UNSUPPORTED_ENCRYPTION:
@@ -106,7 +106,7 @@ std::string MZ_Archive::get_errorstr(mz_zip_error mz_err)
     case MZ_ZIP_INVALID_HEADER_OR_CORRUPTED:
         return L("invalid header or corrupted");
     case MZ_ZIP_UNSUPPORTED_MULTIDISK:
-        return L("Saving to RAID is not supported.");
+        return L("unsupported multidisk");
     case MZ_ZIP_DECOMPRESSION_FAILED:
         return L("decompression failed");
     case MZ_ZIP_COMPRESSION_FAILED:
@@ -138,13 +138,13 @@ std::string MZ_Archive::get_errorstr(mz_zip_error mz_err)
     case MZ_ZIP_INVALID_FILENAME:
         return L("invalid filename");
     case MZ_ZIP_BUF_TOO_SMALL:
-        return L("Buffer too small");
+        return L("buffer too small");
     case MZ_ZIP_INTERNAL_ERROR:
         return L("internal error");
     case MZ_ZIP_FILE_NOT_FOUND:
         return L("file not found");
     case MZ_ZIP_ARCHIVE_TOO_LARGE:
-        return L("Archive too large");
+        return L("archive too large");
     case MZ_ZIP_VALIDATION_FAILED:
         return L("validation failed");
     case MZ_ZIP_WRITE_CALLBACK_FAILED:

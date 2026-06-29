@@ -3,7 +3,6 @@
 
 #include "GLGizmoBase.hpp"
 #include "slic3r/GUI/GLSelectionRectangle.hpp"
-#include "slic3r/GUI/I18N.hpp"
 #include "libslic3r/BrimEarsPoint.hpp"
 #include "libslic3r/ObjectID.hpp"
 
@@ -88,8 +87,8 @@ public:
     bool is_selection_rectangle_dragging() const { return m_selection_rectangle.is_dragging(); }
 
     bool wants_enter_leave_snapshots() const override { return true; }
-    std::string get_gizmo_entering_text() const override { return _u8L("Entering Brim Ears"); }
-    std::string get_gizmo_leaving_text() const override { return _u8L("Leaving Brim Ears"); }
+    std::string get_gizmo_entering_text() const override { return "Entering Brim Ears"; }
+    std::string get_gizmo_leaving_text() const override { return "Leaving Brim Ears"; }
 
 private:
     bool on_init() override;

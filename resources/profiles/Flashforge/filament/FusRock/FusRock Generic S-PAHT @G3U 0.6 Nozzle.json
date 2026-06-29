@@ -3,7 +3,7 @@
 	"name": "FusRock Generic S-PAHT @G3U 0.6 Nozzle",
 	"inherits": "Flashforge Generic PETG",
 	"from": "system",
-	"setting_id": "6Z5vce5YKlCGox8v",
+	"setting_id": "GFSA04",
 	"filament_id": "GFB99",
 	"instantiation": "true",
 	"compatible_printers": [

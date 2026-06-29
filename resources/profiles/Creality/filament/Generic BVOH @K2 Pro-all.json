@@ -3,7 +3,7 @@
     "name": "Generic BVOH @K2 Pro-all",
     "inherits": "fdm_filament_common",
     "from": "system",
-    "setting_id": "WN4gUC7lL433UeUa",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"

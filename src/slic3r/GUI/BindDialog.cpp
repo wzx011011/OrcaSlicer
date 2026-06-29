@@ -35,10 +35,10 @@ wxString get_fail_reason(int code)
         return _L("Failed to publish login request");
 
     else if (code == BAMBU_NETWORK_ERR_BIND_GET_PRINTER_TICKET_TIMEOUT)
-        return _L("Timeout getting ticket from device");
+        return _L("Get ticket from device timeout");
 
     else if (code == BAMBU_NETWORK_ERR_BIND_GET_CLOUD_TICKET_TIMEOUT)
-        return _L("Timeout getting ticket from server");
+        return _L("Get ticket from server timeout");
 
     else if (code == BAMBU_NETWORK_ERR_BIND_POST_TICKET_TO_CLOUD_FAILED)
         return _L("Failed to post ticket to server");

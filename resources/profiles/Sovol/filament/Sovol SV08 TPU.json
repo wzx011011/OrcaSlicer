@@ -3,7 +3,7 @@
 	"name": "Sovol SV08 TPU",
 	"inherits": "Generic TPU @System",
 	"from": "system",
-	"setting_id": "tpBbCQhcSJsBesnG",
+	"setting_id": "GFSA04",
 	"filament_id": "GFL99",
 	"instantiation": "true",
 	"filament_flow_ratio": [

@@ -3,7 +3,7 @@
 	"name": "DeltaMaker Generic PETG",
 	"inherits": "fdm_filament_pet",
 	"from": "system",
-	"setting_id": "qlQo6a93esZv2l9a",
+	"setting_id": "GFSG99",
 	"filament_id": "GFG99",
 	"instantiation": "true",
 	"reduce_fan_stop_start_freq": [

@@ -3,7 +3,7 @@
     "name": "Hyper Stardust @K2 Pro-all",
     "inherits": "fdm_filament_pla",
     "from": "system",
-    "setting_id": "SjkfsdLhjA5CFsCl",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"

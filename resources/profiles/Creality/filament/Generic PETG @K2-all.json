@@ -3,7 +3,7 @@
     "name": "Generic PETG @K2-all",
     "inherits": "fdm_filament_petg",
     "from": "system",
-    "setting_id": "7iDx59I7g14YDF8w",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"

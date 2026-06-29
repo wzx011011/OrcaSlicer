@@ -2,7 +2,6 @@
 	"type": "filament",
 	"name": "Eryone ASA @0.2 nozzle",
 	"from": "system",
-	"setting_id": "SopkMvsT3DXzJ9Ky",
 	"instantiation": "true",
 	"inherits": "Eryone ASA",
 	"compatible_printers": [

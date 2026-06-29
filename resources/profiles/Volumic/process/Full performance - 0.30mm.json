@@ -1,6 +1,6 @@
 {
 	"type": "process",
-	"setting_id": "EG1g0ef96ojgMo8K",
+	"setting_id": "GP004",
 	"name": "Full performance - 0.30mm",
 	"from": "system",
 	"inherits": "fdm_process_volumic_common",

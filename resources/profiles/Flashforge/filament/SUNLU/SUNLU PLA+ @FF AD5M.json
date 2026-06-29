@@ -3,7 +3,7 @@
 	"name": "SUNLU PLA+ @FF AD5M",
 	"inherits": "SUNLU PLA+ @base",
 	"from": "system",
-	"setting_id": "TUTKHeFJoFejsySI",
+	"setting_id": "GFSNLS03",
 	"instantiation": "true",
 	"compatible_printers": [
 		"Flashforge Adventurer 5M Pro 0.4 Nozzle",

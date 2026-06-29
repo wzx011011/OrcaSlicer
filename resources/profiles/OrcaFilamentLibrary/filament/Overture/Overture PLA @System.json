@@ -3,7 +3,7 @@
 	"name": "Overture PLA @System",
 	"inherits": "Overture PLA @base",
 	"from": "system",
-	"setting_id": "uSRi3J4c47reOsqv",
+	"setting_id": "OGFSL04_05",
 	"instantiation": "true",
 	"compatible_printers": []
 }

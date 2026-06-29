@@ -3,7 +3,7 @@
 	"name": "Snapmaker J1 ABS",
 	"inherits": "Snapmaker J1 ABS @base",
 	"from": "system",
-	"setting_id": "J8Md52F4hQL8happ",
+	"setting_id": "3810006449",
 	"instantiation": "true",
 	"compatible_printers": [
 		"Snapmaker J1 (0.4 nozzle)",

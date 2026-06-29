@@ -1,6 +1,6 @@
 {
 	"type": "process",
-	"setting_id": "ZqsUCKAhvogcqdcv",
+	"setting_id": "GP004",
 	"name": "Very high speed - 0.10mm",
 	"from": "system",
 	"inherits": "fdm_process_volumic_common",

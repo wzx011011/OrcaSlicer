@@ -3,7 +3,7 @@
     "name": "Hyper PAHT-CF @K2-all",
     "inherits": "fdm_filament_pa",
     "from": "system",
-    "setting_id": "jtElnQJxHKLDQSHo",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"

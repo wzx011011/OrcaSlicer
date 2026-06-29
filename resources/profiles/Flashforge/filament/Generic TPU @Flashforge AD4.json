@@ -3,7 +3,7 @@
 	"name": "Generic TPU @Flashforge AD4",
 	"inherits": "Flashforge Generic TPU",
 	"from": "system",
-	"setting_id": "DW9Ck6xMK00Ry2iE",
+	"setting_id": "GFSA04",
 	"filament_id": "GFG99",
 	"instantiation": "true",
 	"additional_cooling_fan_speed": [

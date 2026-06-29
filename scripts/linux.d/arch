@@ -14,6 +14,7 @@ export REQUIRED_DEV_PACKAGES=(
     glew
     gst-plugins-good
     gstreamer
+    gstreamermm
     gtk3
     libmspack
     libsecret
@@ -23,7 +24,7 @@ export REQUIRED_DEV_PACKAGES=(
     openssl
     texinfo
     wayland-protocols
-    webkit2gtk-4.1
+    webkit2gtk
     wget
 )
 
@@ -36,7 +37,7 @@ then
     done
 
     if [[ "${#NEEDED_PKGS[*]}" -gt 0 ]]; then
-        sudo pacman -Syu --noconfirm "${NEEDED_PKGS[@]}"
+        sudo pacman -Syy --noconfirm "${NEEDED_PKGS[@]}"
     fi
     echo -e "done\n"
     exit 0

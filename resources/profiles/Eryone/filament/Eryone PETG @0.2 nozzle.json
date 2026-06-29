@@ -2,7 +2,6 @@
 	"type": "filament",
 	"name": "Eryone PETG @0.2 nozzle",
 	"from": "system",
-	"setting_id": "cATziDM4CjP6MiC4",
 	"instantiation": "true",
 	"inherits": "Eryone PETG",
 	"compatible_printers": [

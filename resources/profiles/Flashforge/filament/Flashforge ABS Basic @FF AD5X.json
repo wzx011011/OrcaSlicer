@@ -3,7 +3,7 @@
 	"name": "Flashforge ABS Basic @FF AD5X",
 	"inherits": "Flashforge Generic ABS",
 	"from": "system",
-	"setting_id": "9GXBeuCUrScJfmJB",
+	"setting_id": "GFSA04",
 	"instantiation": "true",
 	"cool_plate_temp": [
 		"0"

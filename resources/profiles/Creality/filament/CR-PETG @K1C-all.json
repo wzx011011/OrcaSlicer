@@ -3,7 +3,7 @@
     "name": "CR-PETG @K1C-all",
     "inherits": "fdm_filament_petg",
     "from": "system",
-    "setting_id": "TCoincnHkpTkdbgr",
+    "setting_id": "GFSA04",
     "instantiation": "true",
     "activate_air_filtration": [
         "0"

@@ -3,7 +3,7 @@
 	"name": "Qidi Generic TPU",
 	"inherits": "fdm_filament_tpu",
 	"from": "system",
-	"setting_id": "qvJXA6V5mxiOguUj",
+	"setting_id": "GFSR99",
 	"filament_id": "GFU99",
 	"instantiation": "true",
 	"filament_type": [

@@ -3,7 +3,7 @@
 	"name": "Elas ASA @System",
 	"inherits": "Elas ASA @base",
 	"from": "system",
-	"setting_id": "xSqkEuXy5sktDx9b",
+	"setting_id": "OGFSB01_00",
 	"instantiation": "true",
 	"fan_min_speed": [
 		"25"

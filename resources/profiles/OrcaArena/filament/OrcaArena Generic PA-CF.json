@@ -3,7 +3,7 @@
 	"name": "OrcaArena Generic PA-CF",
 	"inherits": "fdm_filament_pa",
 	"from": "system",
-	"setting_id": "XHOpI9EFQmYoJ3Sy",
+	"setting_id": "GFSN99",
 	"filament_id": "GFN98",
 	"instantiation": "true",
 	"filament_type": [

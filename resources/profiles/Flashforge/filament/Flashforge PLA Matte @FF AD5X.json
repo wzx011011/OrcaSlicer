@@ -3,7 +3,7 @@
 	"name": "Flashforge PLA Matte @FF AD5X",
 	"inherits": "Flashforge Generic PLA",
 	"from": "system",
-	"setting_id": "thnbuaLDDlGrkrdY",
+	"setting_id": "GFSA04",
 	"instantiation": "true",
 	"cool_plate_temp": [
 		"45"
