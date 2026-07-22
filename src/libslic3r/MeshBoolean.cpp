@@ -336,7 +336,7 @@ void segment(CGALMesh& src, std::vector<CGALMesh>& dst, double smoothing_alpha =
         for (halfedge_descriptor h : border_cycles)
         {
             std::vector<face_descriptor>  patch_facets;
-#if 0
+#if 1 // CGAL 5.4 requires the overload with explicit output iterators.
             std::vector<vertex_descriptor> patch_vertices;
             CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(out, h, std::back_inserter(patch_facets),
                 std::back_inserter(patch_vertices));
@@ -521,12 +521,18 @@ bool repair(TriangleMesh& mesh, RepairedMeshErrors* repaired_errors, std::string
         // 7) Fill holes
         if (!CGAL::is_closed(cgal_mesh)) {
             using halfedge_descriptor = boost::graph_traits<_EpicMesh>::halfedge_descriptor;
+            using face_descriptor = boost::graph_traits<_EpicMesh>::face_descriptor;
+            using vertex_descriptor = boost::graph_traits<_EpicMesh>::vertex_descriptor;
 
             std::vector<halfedge_descriptor> borders;
             PMP::extract_boundary_cycles(cgal_mesh, std::back_inserter(borders));
 
             for (halfedge_descriptor h : borders) {
-                PMP::triangulate_and_refine_hole(cgal_mesh, h);
+                // CGAL 5.4 requires output iterators for this overload.
+                std::vector<face_descriptor> patch_faces;
+                std::vector<vertex_descriptor> patch_vertices;
+                PMP::triangulate_and_refine_hole(cgal_mesh, h,
+                    std::back_inserter(patch_faces), std::back_inserter(patch_vertices));
             }
         }
 
