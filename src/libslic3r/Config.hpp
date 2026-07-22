@@ -2110,6 +2110,9 @@ public:
 
     std::string serialize() const override
     {
+        // Preserve numeric enum values when DynamicPrintConfig has no key map.
+        if (this->keys_map == nullptr)
+            return std::to_string(this->value);
         for (const auto &kvp : *this->keys_map)
             if (kvp.second == this->value)
                 return kvp.first;
@@ -2119,6 +2122,8 @@ public:
     bool deserialize(const std::string &str, bool append = false) override
     {
         UNUSED(append);
+        // A missing key map cannot resolve a symbolic enum value.
+        if (this->keys_map == nullptr) return false;
         auto it = this->keys_map->find(str);
         if (it == this->keys_map->end())
             return false;
@@ -2203,6 +2208,8 @@ public:
                     throw ConfigurationError("Deserializing nil into a non-nullable object");
             }
             else {
+                // A missing key map cannot resolve a symbolic enum value.
+                if (this->keys_map == nullptr) return false;
                 auto it = this->keys_map->find(item_str);
                 if (it == this->keys_map->end())
                     return false;
@@ -2221,7 +2228,12 @@ private:
             else
                 throw ConfigurationError("Serializing NaN");
         }
-        else if (this->keys_map != nullptr) {
+        else {
+            // Preserve numeric enum values when DynamicPrintConfig has no key map.
+            if (this->keys_map == nullptr) {
+                ss << v;
+                return;
+            }
             for (const auto& kvp : *this->keys_map)
                 if (kvp.second == v)
                     ss << kvp.first;
