@@ -53,8 +53,12 @@ if "%VS_MAJOR%"=="16" (
     set VS_VERSION=2022
     set CMAKE_GENERATOR="Visual Studio 17 2022"
 ) else if "%VS_MAJOR%"=="18" (
-    set VS_VERSION=2026
-    set CMAKE_GENERATOR="Visual Studio 18 2026"
+    @REM VS 18 (preview) is detected but OrcaSlicer deps (notably Boost b2) do
+    @REM not support the v180 toolset. Fall back to the VS 2022 generator, which
+    @REM is installed alongside VS 18 on the CI runner and is fully supported.
+    echo Visual Studio 18 detected; falling back to VS 2022 generator for deps compat.
+    set VS_VERSION=2022
+    set CMAKE_GENERATOR="Visual Studio 17 2022"
 ) else (
     echo Error: Unsupported Visual Studio version: %VS_MAJOR%
     echo Supported versions: VS2019 (16.x^), VS2022 (17.x^), VS2026 (18.x^)
