@@ -15,18 +15,26 @@ TriangleMesh TriangleMeshDeal::smooth_triangle_mesh(const TriangleMesh& mesh, bo
 
         auto vertices_count = mesh.its.vertices.size();
         auto indices_count  = mesh.its.indices.size();
-        // Use Map to map the vertices and indicies into Matrixes without requiring a copy.
-        const Eigen::Map<const RowMatrixX3f> OV(mesh.its.vertices[0].data(), vertices_count, 3);
-        const Eigen::Map<const RowMatrixX3i> OF(mesh.its.indices[0].data(), indices_count, 3);
-        Eigen::MatrixX3f                     V;
-        Eigen::MatrixX3i                     F;
+        // Copy the ITS vertices/faces into Eigen matrices. 0632bae8's igl::loop
+        // overload (V, F, NV, NF) requires PlainObjectBase inputs (not Map), and
+        // the input matrices must match the Row-major layout the subdivision
+        // expects. Earlier baselines accepted a Map<const ...>; this one does not.
+        RowMatrixX3f OV(vertices_count, 3);
+        RowMatrixX3i OF(indices_count, 3);
+        for (size_t i = 0; i < vertices_count; ++i) {
+            OV(i, 0) = mesh.its.vertices[i].x();
+            OV(i, 1) = mesh.its.vertices[i].y();
+            OV(i, 2) = mesh.its.vertices[i].z();
+        }
+        for (size_t i = 0; i < indices_count; ++i) {
+            OF(i, 0) = mesh.its.indices[i][0];
+            OF(i, 1) = mesh.its.indices[i][1];
+            OF(i, 2) = mesh.its.indices[i][2];
+        }
+        RowMatrixX3f V;
+        RowMatrixX3i F;
 
         ok = true;
-        // TODO: add validation checks for the input mesh? Is this really necessary?
-        // if ( <not OK> ) {
-        //    ok = false;
-        //    return TriangleMesh();
-        // }
         loop(OV, OF, V, F);
 
         indexed_triangle_set its;
