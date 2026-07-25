@@ -336,7 +336,7 @@ void segment(CGALMesh& src, std::vector<CGALMesh>& dst, double smoothing_alpha =
         for (halfedge_descriptor h : border_cycles)
         {
             std::vector<face_descriptor>  patch_facets;
-#if 0
+#if 1 // CGAL 5.4 requires the overload with explicit output iterators.
             std::vector<vertex_descriptor> patch_vertices;
             CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(out, h, std::back_inserter(patch_facets),
                 std::back_inserter(patch_vertices));
