@@ -16,8 +16,13 @@ if (APPLE)
     )
 else()
     orcaslicer_add_cmake_project(TIFF
+        # NOTE: GitLab archive zips are not byte-reproducible; GitLab
+        # regenerated the v4.1.0 archive (old pinned hash c56edfacef0a60c0...)
+        # and downloads now hash 17a3e875... . Hash updated to the currently
+        # served archive. Built deps are cached by CI, so the download only
+        # re-occurs on cache misses.
         URL https://gitlab.com/libtiff/libtiff/-/archive/v4.1.0/libtiff-v4.1.0.zip
-        URL_HASH SHA256=c56edfacef0a60c0de3e6489194fcb2f24c03dbb550a8a7de5938642d045bd32
+        URL_HASH SHA256=17a3e875acece9be40b093361cfef47385d4ef22c995ffbf36b2871f5785f9b8
         DEPENDS ${ZLIB_PKG} ${PNG_PKG} dep_JPEG
         CMAKE_ARGS
             -Dlzma:BOOL=OFF
