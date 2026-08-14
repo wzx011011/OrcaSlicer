@@ -116,13 +116,16 @@ echo "building deps.."
 echo on
 REM Set minimum CMake policy to avoid <3.5 errors
 set CMAKE_POLICY_VERSION_MINIMUM=3.5
+REM DESTDIR override mirrors upstream build_release_vs2022.bat: without it
+REM deps install into <build>/destdir; consumers expect <build>/OrcaSlicer_dep
+REM (usr/local prefix layout under it).
 if "%USE_NINJA%"=="1" (
-    cmake ../ -G %CMAKE_GENERATOR% -DCMAKE_BUILD_TYPE=%build_type%
+    cmake ../ -G %CMAKE_GENERATOR% -DDESTDIR="%WP%/deps/build/OrcaSlicer_dep" -DCMAKE_BUILD_TYPE=%build_type%
     if errorlevel 1 exit /b 1
     cmake --build . --config %build_type% --target deps
     if errorlevel 1 exit /b 1
 ) else (
-    cmake ../ -G %CMAKE_GENERATOR% -A x64 -DCMAKE_BUILD_TYPE=%build_type%
+    cmake ../ -G %CMAKE_GENERATOR% -A x64 -DDESTDIR="%WP%/deps/build/OrcaSlicer_dep" -DCMAKE_BUILD_TYPE=%build_type%
     if errorlevel 1 exit /b 1
     cmake --build . --config %build_type% --target deps -- -m
     if errorlevel 1 exit /b 1
