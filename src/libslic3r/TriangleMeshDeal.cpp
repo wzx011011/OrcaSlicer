@@ -38,10 +38,15 @@ TriangleMesh TriangleMeshDeal::smooth_triangle_mesh(const TriangleMesh& mesh, bo
         loop(OV, OF, V, F);
 
         indexed_triangle_set its;
-        auto                 iterv = V.rowwise();
-        auto                 iterf = F.rowwise();
-        its.vertices.assign(iterv.cbegin(), iterv.cend());
-        its.indices.assign(iterf.cbegin(), iterf.cend());
+        // Explicit row loops: the vendored Eigen build lacks VectorwiseOp
+        // cbegin/cend (only present in newer releases), so range-assigning
+        // via rowwise() iterators does not compile everywhere.
+        its.vertices.reserve(V.rows());
+        for (Eigen::Index r = 0; r < V.rows(); ++r)
+            its.vertices.emplace_back(V(r, 0), V(r, 1), V(r, 2));
+        its.indices.reserve(F.rows());
+        for (Eigen::Index r = 0; r < F.rows(); ++r)
+            its.indices.emplace_back(F(r, 0), F(r, 1), F(r, 2));
         TriangleMesh result_mesh(its);
         return result_mesh;
     }
