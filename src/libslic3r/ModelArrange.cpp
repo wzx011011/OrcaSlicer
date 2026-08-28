@@ -19,6 +19,9 @@ arrangement::ArrangePolygons get_arrange_polys(const Model &model, ModelInstance
     for (ModelObject *mo : model.objects)
         for (ModelInstance *minst : mo->instances) {
             minst->get_arrange_polygon(&ap);
+            // ModelInstance::get_arrange_polygon leaves bed_idx at its
+            // UNARRANGED default; seed it to physical bed 0 before nesting.
+            ap.bed_idx = 0;
             input.emplace_back(ap);
             instances.emplace_back(minst);
         }
